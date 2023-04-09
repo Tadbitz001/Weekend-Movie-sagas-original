@@ -14,6 +14,17 @@ import axios from 'axios';
 // Create the rootSaga generator function
 function* rootSaga() {
     yield takeEvery('FETCH_MOVIES', fetchAllMovies);
+    //getting movie id from MovieList
+    yield takeEvery('GET_MOVIE_ID', getMovieId) //4️⃣
+}
+        //need action as an argument to get the data to cme thru
+function getMovieId (action) { //5️⃣
+    try {
+        console.log('this is getMovie payload:', action.payload.id)
+        // yield put ({ type: 'GET_MOVIE_ID', payload: id})
+    } catch {
+        console.log('Error in getting MovieId');
+    }
 }
 
 function* fetchAllMovies() {
