@@ -18,10 +18,10 @@ function* rootSaga() {
     yield takeEvery('GET_MOVIE_ID', getMovieId) //4️⃣
 }
         //need action as an argument to get the data to cme thru
-function getMovieId (action) { //5️⃣
+function* getMovieId (action) { //5️⃣
     try {
-        console.log('this is getMovie payload:', action.payload.id)
-        // yield put ({ type: 'GET_MOVIE_ID', payload: id})
+        // console.log('this is getMovie payload:', action.payload.id)
+        yield put ({ type: 'SET_MOVIE_INFO', payload: action.payload})
     } catch {
         console.log('Error in getting MovieId');
     }
@@ -31,17 +31,26 @@ function* fetchAllMovies() {
     // get all movies from the DB
     try {
         const movies = yield axios.get('/api/movie');
-        console.log('get all:', movies.data);
+        // console.log('get all:', movies.data);
         yield put({ type: 'SET_MOVIES', payload: movies.data });
 
     } catch {
         console.log('get all error');
     }
-        
 }
 
 // Create sagaMiddleware
 const sagaMiddleware = createSagaMiddleware();
+
+//Used to store individual movie from movie list
+const movieInfo = (state = [], action) => {
+    switch (action.type) {
+        case 'SET_MOVIE_INFO'://6️⃣
+            return action.payload;
+        default:
+            return state;
+    }
+}
 
 // Used to store movies returned from the server
 const movies = (state = [], action) => {
@@ -68,6 +77,7 @@ const storeInstance = createStore(
     combineReducers({
         movies,
         genres,
+        movieInfo//7️⃣
     }),
     // Add sagaMiddleware to our store
     applyMiddleware(sagaMiddleware, logger),
